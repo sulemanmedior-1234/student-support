@@ -1,0 +1,29 @@
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+def analyze_feedback_sentiment(texts):
+    """Analyzes text feedback using NLTK VADER sentiment analysis."""
+    try:
+        nltk.data.find('sentiment/vader_lexicon.zip')
+    except LookupError:
+        nltk.download('vader_lexicon', quiet=True)
+        
+    sia = SentimentIntensityAnalyzer()
+    results = []
+    
+    for text in texts:
+        scores = sia.polarity_scores(str(text))
+        compound = scores['compound']
+        if compound >= 0.05:
+            sentiment = 'Positive'
+        elif compound <= -0.05:
+            sentiment = 'Negative'
+        else:
+            sentiment = 'Neutral'
+            
+        results.append({
+            'text': text,
+            'compound': compound,
+            'sentiment': sentiment
+        })
+        
+    return results
